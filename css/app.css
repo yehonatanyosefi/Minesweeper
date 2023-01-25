@@ -1,0 +1,133 @@
+body {
+  background-color: white;
+  color: black;
+  text-align: center;
+  user-select: none;
+}
+
+table {
+  margin: auto;
+}
+
+.cell {
+  width: 40px;
+  height: 40px;
+  text-align: center;
+  font-size: 1.5em;
+  outline: auto;
+  outline-color: white;
+  background-color: rgb(229,194,159);
+}
+
+:nth-of-type(even).oddRow {
+  background-color: rgb(215,184,153);
+}
+
+:nth-of-type(odd).evenRow {
+  background-color: rgb(215,184,153);
+}
+
+.modal {
+  display: none;
+  background-color: turquoise;
+  border: 5px solid white;
+  width: 300px;
+  padding: 20px;
+
+  position: absolute;
+  top: 37%;
+  left: calc(50% - 175px);
+}
+
+.restart-btn {
+  background-color: turquoise;
+  border: 5px solid white;
+  color: black;
+}
+
+.num1 {
+  color: blue;
+}
+.num2 {
+  color: green;
+}
+.num3 {
+  color: red;
+}
+.num4 {
+  color: purple;
+}
+.num5 {
+  color:darkgrey;
+}
+
+.cell.isntClicked {
+  background-color: rgb(170,215,81);
+}
+
+:nth-of-type(even).cell.isntClicked.oddRow {
+  background-color: rgb(162,209,73);
+}
+
+:nth-of-type(odd).cell.isntClicked.evenRow {
+  background-color: rgb(162,209,73);
+}
+
+.bomb {
+  background-color: red;
+}
+
+.number:hover, .bomb:hover {
+  background-color: white;
+  cursor: default;
+  opacity: 0.9;
+  transition: 150ms;
+}
+
+.cell.isntClicked:hover {
+  background-color: white;
+  cursor: pointer;
+  opacity: 0.88;
+  transition: 150ms;
+}
+
+button {
+  background-color: white;
+}
+
+#smiley {
+  font-size: 40px;
+}
+
+.game-elements {
+  border: 2px dashed black;
+  border-radius: 10px;
+  position: relative;
+  margin: auto;
+  overflow: auto;
+  height: 50px;
+  width: 170px;
+}
+
+#hints {
+  border: 2px dashed black;
+  border-radius: 10px;
+  position: relative;
+  margin: auto;
+  overflow: auto;
+  height: 25px;
+  width: 75px;
+}
+
+#safe-click {
+  border: 2px solid black;
+  border-radius: 10px;
+  background-color: turquoise;
+  position: relative;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+  margin: auto;
+  overflow: auto;
+  height: 40px;
+  width: 100px;
+}

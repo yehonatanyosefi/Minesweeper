@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Minesweeper</title>
+    <link rel="stylesheet" href="css/app.css">
+</head>
+
+<body onload="init()">
+
+    <div class="game-elements">🏆:<span id="best-score"></span>s ⌛:<span id="time">0</span>s  🚩:<span id="flags">2</span> ⛳:<span id="lives"></span></div>
+    <br>
+    <div id="hints" onclick="onHintClick()"></div>
+    <br>
+    <button id="safe-click" onclick="onSafeClick()">safe click</button>
+    <br> <br>
+    <button id="smiley" onclick="init()">😀</button>
+    <br> <br>
+    <button onclick="setDifficulty(0)">Easy</button> <button onclick="setDifficulty(1)">Medium</button> <button onclick="setDifficulty(2)">Expert</button>
+    <br><br>
+    <div class="board-container">
+
+    </div>
+
+    <script src="js/utils.js"></script>
+    <script src="js/game.js"></script>
+</body>
+<footer><h5>Made by Yehonatan Yosefi</h3></footer>
+</html>
