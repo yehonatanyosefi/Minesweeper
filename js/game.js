@@ -179,6 +179,7 @@ function onCellClicked(elCell, posI, posJ) {
             return
         } else {
             createNumbers()
+            gGame.isManualMines = false
         }
     } else if (gGame.isHint) {
         handleHint(posI, posJ)
