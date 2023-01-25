@@ -11,12 +11,22 @@
 
 <body onload="init()">
 
+    <img src="img/exterminator.bmp" onclick="onExterminateClick()">
+    <br><br>
+    <button id="hints" onclick="onHintClick()"></button>
+    <br><br>
+    <button id="mega-hint" onclick="onMegaHint()">Mega Hint<span></span></button>
+    <br><br>
+    <button id="manual-mines" onclick="onManualMinesClick()">Manual Mines<span></span></button>
+    <br><br>
+    <button id="safe-click" onclick="onSafeClick()">safe click</button>
+    <br>
+    <span id="safe-click-text">3</span> clicks remaining
+    <br><br>
     <div class="game-elements">🏆:<span id="best-score"></span>s ⌛:<span id="time">0</span>s  🚩:<span id="flags">2</span> ⛳:<span id="lives"></span></div>
     <br>
-    <div id="hints" onclick="onHintClick()"></div>
-    <br>
-    <button id="safe-click" onclick="onSafeClick()">safe click</button>
-    <br> <br>
+    <button id="undo" onclick="onUndoClick()">Undo</button>
+    <br><br>
     <button id="smiley" onclick="init()">😀</button>
     <br> <br>
     <button onclick="setDifficulty(0)">Easy</button> <button onclick="setDifficulty(1)">Medium</button> <button onclick="setDifficulty(2)">Expert</button>

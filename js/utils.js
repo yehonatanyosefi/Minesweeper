@@ -52,7 +52,7 @@ function showHint(board, posI, posJ) { //can refactor with expand with a 3rd fun
             // if (i === posI && j === posJ) continue
             if (j < 0 || j > board[i].length - 1) continue
             if (board[i][j].isShown) continue
-            var currPos = {posI: i, posJ: j}
+            var currPos = { posI: i, posJ: j }
             posArr.push(currPos)
             board[i][j].isShown = true
         }
@@ -77,7 +77,7 @@ function setMinesNegsCount(board, posI, posJ) {
 function updateHints() {
     var elHints = document.querySelector('#hints')
     var hints = ''
-    if (gGame.hintsCount === 0 ) hints = '0 Hints.'
+    if (gGame.hintsCount === 0) hints = '0 Hints.'
     else for (var i = 0; i < gGame.hintsCount; i++) {
         hints += '💡'
     }
@@ -95,8 +95,23 @@ function updateSmiley(emoji) {
 }
 
 function updateFlags() {
-    var elSpan = document.querySelector('#flags')
-    elSpan.innerText = (gLevel.MINES - gGame.markedCount)
+    var elFlags = document.querySelector('#flags')
+    elFlags.innerText = (gLevel.MINES - gGame.markedCount)
+}
+
+function updateSafeClicks() {
+    var elSafeText = document.querySelector('#safe-click-text')
+    elSafeText.innerText = gGame.safeClickCount
+}
+
+function updateMines(minesToPlace) {
+    if (!minesToPlace) {
+        var text = ''
+    } else {
+        var text = `: ${minesToPlace}`
+    }
+    var elMines = document.querySelector('#manual-mines span')
+    elMines.innerText = text
 }
 
 function updateLives() {
@@ -109,9 +124,15 @@ function updateLives() {
 }
 
 function updateScore(score) {
-    var elSpan = document.querySelector('#best-score')
-    if (score >= 10000) elSpan.innerText = '∞'
-    else elSpan.innerText = score
+    var elScore = document.querySelector('#best-score')
+    if (score >= 10000) elScore.innerText = '∞'
+    else elScore.innerText = score
+}
+
+function toggleMegaBtn(isHide) {
+    var elBtn = document.querySelector('#mega-hint')
+    if (isHide) elBtn.classList.add('hide')
+    else elBtn.classList.remove('hide')
 }
 
 function startTimer() {
@@ -125,13 +146,6 @@ function startTimer() {
     }, 1000)
 }
 
-// location is an object like this - { i: 2, j: 7 }
-function renderCell(location, value) {
-    // Select the elCell and set the value
-    const elCell = document.querySelector(`.cell-${location.i}-${location.j}`)
-    elCell.innerHTML = value
-}
-
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min)) + min
 }
@@ -142,7 +156,11 @@ function playSound(fileName) {
     audio.play()
 }
 
-function getClassName(location) {
-    var cellClass = 'cell-' + location.i + '-' + location.j
-    return cellClass
-}
+
+//todo: use this
+// location is an object like this - { i: 2, j: 7 }
+// function renderCell(location, value) {
+//     // Select the elCell and set the value
+//     const elCell = document.querySelector(`.cell-${location.i}-${location.j}`)
+//     elCell.innerHTML = value
+// }

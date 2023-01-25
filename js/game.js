@@ -19,12 +19,12 @@ document.addEventListener('contextmenu', event => event.preventDefault()) //disa
 //3 hints - V
 //best score - V - couldn't make it array so split it into 3
 //full expand - V
-//safe click - V - do you want me to notify the user when the 3 ends?
-//manually positioned mines
-//undo
-//Dark Mode
-//mega Hint
-//mine exterminator
+//safe click - V
+//manually positioned mines - V
+//undo - V - I don't need to undo after a game over right? or when I use the special features undo them right?
+//Dark Mode - CBA
+//mega Hint - V
+//mine exterminator - V
 //ITP - renderCell() instead of renderBoard()
 //ITP - refactor things to use more functions and make it more readable
 //ITP - add comments everywhere
@@ -50,7 +50,15 @@ function setGlobals() {
     gGame.livesCount = 3
     gGame.hintsCount = 3
     gGame.safeClickCount = 3
+    gGame.MinesPlaced = 0
+    gGame.isManualMines = false
     gGame.isHint = false
+    gGame.undoPosArr = []
+    gGame.undoPosCount = []
+    gGame.exterminate = false
+    gGame.mineArr = []
+    gGame.isMega = false
+    gGame.megaFirstPos = {}
     switch (gLevel.DIFFICULTY) {
         case 0:
             if (!localStorage.scoreEasy) localStorage.scoreEasy = Infinity
@@ -77,9 +85,12 @@ function resetElements() {
     updateTimer('0')
     updateHints()
     updateScore(getScore())
+    updateSafeClicks()
+    updateMines('')
+    toggleMegaBtn(false)
 }
 
-function getScore() {
+function getScore() { //wish I can make it an array instead of this **** thing
     switch (gLevel.DIFFICULTY) {
         default:
             return localStorage.scoreEasy
@@ -93,7 +104,7 @@ function getScore() {
     }
 }
 
-function setDifficulty(diffLevel) {
+function setDifficulty(diffLevel) { //should I rename it to onClickDifficulty? can't get used to naming conventions
     gLevel.DIFFICULTY = diffLevel
     init()
 }
@@ -122,11 +133,15 @@ function createBombs(posI, posJ) {
     }
 }
 
-function createBomb(posI, posJ) {
+function createBomb(posI, posJ) { //I chose recursion because I think it's cheaper complexity in our use case
     var newPosI = getRandomInt(1, gLevel.Size)
     var newPosJ = getRandomInt(1, gLevel.Size)
     if (gBoard[newPosI][newPosJ].isMine === true || (newPosI === posI && newPosJ === posJ)) createBomb(posI, posJ) //recursion to create in another spot if it's already occupied or if it's first click
-    else gBoard[newPosI][newPosJ].isMine = true
+    else {
+        gBoard[newPosI][newPosJ].isMine = true
+        var posObj = {i:newPosI,j:newPosJ}
+        gGame.mineArr.push(posObj)
+    }
 }
 
 function createNumbers() {
@@ -143,7 +158,7 @@ function onCellClicked(elCell, posI, posJ) {
     if (!gGame.isOn) return
     var currCell = gBoard[posI][posJ]
     if (currCell.isShown || (currCell.isMarked && elCell.button === 0)) return
-    if (elCell.button === 2) {    //make or break flag
+    if (elCell.button === 2) { //make or break flag
         if (gGame.markedCount === gLevel.MINES && !currCell.isMarked) return
         currCell.isMarked = !currCell.isMarked
         gGame.markedCount = (currCell.isMarked) ? gGame.markedCount + 1 : gGame.markedCount - 1
@@ -152,13 +167,39 @@ function onCellClicked(elCell, posI, posJ) {
         return
     } else if (elCell.button !== 0) return //make it only work for the two mouse buttons and not the scrollwheel or other gaming mouse buttons
 
-    if (!gGame.timerInterval) { //make board without bombs on the first cell, and start timer on firstclick
-        firstClick(posI, posJ)
+    if (!gGame.timerInterval && !gGame.isManualMines) { //make board without bombs on the first cell, and start timer on firstclick
+        handleFirstClick(posI, posJ)
         startTimer()
-    }
-    if (gGame.isHint) {
+    } else if (gGame.isManualMines) {
+        if (currCell.isMine) return
+        if (gGame.MinesPlaced !== gLevel.MINES) {
+            currCell.isMine = true
+            gGame.MinesPlaced++
+            updateMines(gLevel.MINES - gGame.MinesPlaced)
+            return
+        } else {
+            createNumbers()
+        }
+    } else if (gGame.isHint) {
         handleHint(posI, posJ)
         gGame.isHint = false
+        return
+    } else if (gGame.isMega) {
+        if (!gGame.megaFirstPos.i) {
+            var posObj = {i:posI, j:posJ}
+            gGame.megaFirstPos = posObj
+        } else {
+            var firstPos = gGame.megaFirstPos
+            var lastPos = {i: posI, j: posJ}
+            toggleMegaView(firstPos, lastPos, true)
+            gGame.isOn = false
+            setTimeout(() => {
+                toggleMegaView(firstPos, lastPos, false)
+                toggleMegaBtn(true)
+                gGame.isOn = true
+            }, 2000);
+            gGame.isMega = false
+        }
         return
     }
     if (currCell.isMine) {
@@ -168,10 +209,34 @@ function onCellClicked(elCell, posI, posJ) {
         currCell.isShown = true
         gGame.shownCount++
         playSound('correct')
+        var posObj = { i: posI, j: posJ }
+        gGame.undoPosArr.unshift(posObj)
+        gGame.undoPosCount.unshift(1)
         if (currCell.minesAroundCount === 0) expandShown(posI, posJ)
     }
     if (gGame.shownCount === (gLevel.Size ** 2 - gLevel.MINES)) checkGameOver(true)
     renderBoard(gBoard, '.board-container') //renders all board TODO: refactor to each cell
+}
+
+function toggleMegaView(firstPos, lastPos, show) {
+    for (var i = firstPos.i; i <= lastPos.i; i++) {
+        for (var j = firstPos.j; j <= lastPos.j; j++) {
+            gBoard[i][j].isShown = show
+        }
+    }
+    renderBoard(gBoard, '.board-container')
+}
+
+function onUndoClick() {
+    if (!gGame.timerInterval) return
+    if (!gGame.undoPosArr[0]) return
+    for (var i = 0; i < gGame.undoPosCount[0]; i++) {
+        var pos = gGame.undoPosArr.shift()
+        gBoard[pos.i][pos.j].isShown = false
+        gGame.shownCount--
+    }
+    gGame.undoPosCount.shift()
+    renderBoard(gBoard, '.board-container')
 }
 
 function onHintClick() {
@@ -179,6 +244,45 @@ function onHintClick() {
     gGame.hintsCount--
     gGame.isHint = true
     updateHints()
+}
+
+function onManualMinesClick() {
+    if (gGame.isManualMines) {
+        init()
+    } else {
+        init()
+        gGame.isManualMines = true
+        updateMines(gLevel.MINES)
+    }
+}
+
+function onSafeClick() {
+    if (gGame.safeClickCount === 0 || !gGame.isOn || !gGame.timerInterval) return
+    gGame.safeClickCount--
+    updateSafeClicks()
+    handleSafeClick()
+}
+
+function onExterminateClick() {
+    if (gGame.exterminate || !gGame.timerInterval || gLevel.DIFFICULTY === 0) return
+    playSound('exterminate')
+    gGame.exterminate = true
+    for (var i = 0; i < 3; i++) {
+        var pos = gGame.mineArr[getRandomInt(0,gGame.mineArr.length)]
+        gBoard[pos.i][pos.j].isMine = false
+    }
+    createNumbers()
+    renderBoard(gBoard, '.board-container')
+}
+
+function onMegaHint() {
+    if (!gGame.timerInterval) return
+    if (!gGame.megaFirstPos.i) gGame.isMega = !gGame.isMega
+}
+
+function handleFirstClick(posI, posJ) {
+    createBombs(posI, posJ)
+    createNumbers()
 }
 
 function handleHint(posI, posJ) {
@@ -195,11 +299,6 @@ function handleHint(posI, posJ) {
     }, 1000);
 }
 
-function onSafeClick() {
-    if (gGame.safeClickCount === 0 || !gGame.isOn || !gGame.timerInterval) return
-    gGame.safeClickCount--
-    handleSafeClick()
-}
 function handleSafeClick() {
     var emptyCell = getEmptyCell()
     var posI = emptyCell.i
@@ -222,7 +321,7 @@ function checkGameOver(isWin) {
         updateFlags()
         updateSmiley('😎')
         playSound('win')
-        switch (gLevel.DIFFICULTY) {
+        switch (gLevel.DIFFICULTY) { //hope to make this an array
             case 0:
                 if (gGame.secsPassed < localStorage.scoreEasy) {
                     localStorage.scoreEasy = gGame.secsPassed
@@ -272,6 +371,9 @@ function expandShown(posI, posJ) { //why gBoard and elCell?
             if (currCell.isMine === true) continue
             currCell.isShown = true //explodes for empty or num
             gGame.shownCount++
+            var posObj = { i, j }
+            gGame.undoPosArr.unshift(posObj)
+            gGame.undoPosCount[0]++
             if (!currCell.isMine && currCell.minesAroundCount === 0) expandShown(i, j) //recursion for empty ones
         }
     }
@@ -281,15 +383,13 @@ function showAllMines(isWin) { //all mines reveal or all flags reveal
     for (var i = 0; i < gLevel.Size; i++) {
         for (var j = 0; j < gLevel.Size; j++) {
             if (gBoard[i][j].isMine === true) {
-                if (!isWin) gBoard[i][j].isShown = true
+                if (!isWin) {
+                    gBoard[i][j].isShown = true
+                    gBoard[i][j].isMarked = false
+                }
                 else gBoard[i][j].isMarked = true
             }
         }
     }
     renderBoard(gBoard, '.board-container')
-}
-
-function firstClick(posI, posJ) {
-    createBombs(posI, posJ)
-    createNumbers()
 }

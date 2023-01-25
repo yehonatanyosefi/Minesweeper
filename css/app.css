@@ -27,18 +27,6 @@ table {
   background-color: rgb(215,184,153);
 }
 
-.modal {
-  display: none;
-  background-color: turquoise;
-  border: 5px solid white;
-  width: 300px;
-  padding: 20px;
-
-  position: absolute;
-  top: 37%;
-  left: calc(50% - 175px);
-}
-
 .restart-btn {
   background-color: turquoise;
   border: 5px solid white;
@@ -130,4 +118,40 @@ button {
   overflow: auto;
   height: 40px;
   width: 100px;
+}
+
+#manual-mines {
+  border: 2px solid black;
+  border-radius: 10px;
+  background-color: yellow;
+  position: relative;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+  margin: auto;
+  overflow: auto;
+  height: 40px;
+  width: 100px;
+}
+
+#mega-hint {
+  border: 2px solid black;
+  border-radius: 10px;
+  background-color: darkblue;
+  color: white;
+  position: relative;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+  margin: auto;
+  overflow: auto;
+  height: 40px;
+  width: 100px;
+}
+
+img {
+  height: 50px;
+  width: 60px;
+}
+
+.hide {
+  visibility: hidden;
 }
