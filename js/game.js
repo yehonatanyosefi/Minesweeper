@@ -8,6 +8,7 @@ const SMILEY = '😀'
 var gBoard
 const gGame = {}
 const gLevel = { DIFFICULTY: 0, }
+var isBgMusic = false
 
 document.addEventListener('contextmenu', event => event.preventDefault()) //disable context menu
 
@@ -28,7 +29,6 @@ document.addEventListener('contextmenu', event => event.preventDefault()) //disa
 //ITP - renderCell() instead of renderBoard()
 //ITP - refactor things to use more functions and make it more readable, like left mouse click and right mouse click
 //ITP - add comments everywhere
-playSound('bg_music', 0.5)
 function init() {
     if (gGame.isMega) {
         playSound('error')
@@ -107,6 +107,10 @@ function resetElements() {
     updateMegaBtn('darkblue')
     var elExterminate = document.querySelector('#exterminator')
     elExterminate.classList.remove('hide')
+    if (!isBgMusic) {
+        playSound('bg_music', 0.5, true)
+        isBgMusic = true
+    }
 }
 
 function getScore() { //wish I can make it an array instead of this **** thing
