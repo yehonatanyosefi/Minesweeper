@@ -44,28 +44,6 @@ function getEmptyCell() {
     return emptyCells[getRandomInt(0, emptyCells.length)]
 }
 
-function showHint(board, posI, posJ) { //can refactor with expand with a 3rd function to get negs
-    var posArr = []
-    for (var i = posI - 1; i <= posI + 1; i++) {
-        if (i < 0 || i > board.length - 1) continue
-        for (var j = posJ - 1; j <= posJ + 1; j++) {
-            // if (i === posI && j === posJ) continue
-            if (j < 0 || j > board[i].length - 1) continue
-            if (board[i][j].isShown) continue
-            var currPos = { posI: i, posJ: j }
-            posArr.push(currPos)
-            board[i][j].isShown = true
-            if (board[i][j].isMarked) {
-                gGame.markedCount--
-                board[i][j].isMarked = false
-                updateFlags()
-            }
-        }
-    }
-    renderBoard(board, '.board-container')
-    return posArr
-}
-
 function setMinesNegsCount(board, posI, posJ) {
     var sum = 0
     for (var i = posI - 1; i <= posI + 1; i++) {
@@ -145,10 +123,12 @@ function toggleMegaBtn(isHide) {
     else elBtn.classList.remove('hide')
 }
 
-function toggleMegaView(firstPos, lastPos, show) {
-
-    for (var i = firstPos.i; i <= lastPos.i; i++) {
-        for (var j = firstPos.j; j <= lastPos.j; j++) {
+function toggleMega(board, posI, posJ, show, newPosArr) {
+    var posArr = []
+    for (var i = posI.i; i <= posJ.i; i++) {
+        for (var j = posI.j; j <= posJ.j; j++) {
+            var currPos = {i, j}
+            if (gBoard[i][j].isShown) posArr.push(currPos)
             gBoard[i][j].isShown = show
             if (gBoard[i][j].isMarked) {
                 gGame.markedCount--
@@ -157,7 +137,35 @@ function toggleMegaView(firstPos, lastPos, show) {
             }
         }
     }
+    if (newPosArr) {
+        for (var i = 0; i < newPosArr.length; i++) {
+            gBoard[newPosArr[i].i][newPosArr[i].j].isShown = true
+        }
+    }
     renderBoard(gBoard, '.board-container')
+    return posArr
+}
+
+function showHint(board, posI, posJ) { //can refactor with expand with a 3rd function to get negs
+    var posArr = []
+    for (var i = posI - 1; i <= posI + 1; i++) {
+        if (i < 0 || i > board.length - 1) continue
+        for (var j = posJ - 1; j <= posJ + 1; j++) {
+            // if (i === posI && j === posJ) continue
+            if (j < 0 || j > board[i].length - 1) continue
+            if (board[i][j].isShown) continue
+            var currPos = { posI: i, posJ: j }
+            posArr.push(currPos)
+            board[i][j].isShown = true
+            if (board[i][j].isMarked) {
+                gGame.markedCount--
+                board[i][j].isMarked = false
+                updateFlags()
+            }
+        }
+    }
+    renderBoard(board, '.board-container')
+    return posArr
 }
 
 function startTimer() {

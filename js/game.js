@@ -186,9 +186,9 @@ function onCellClicked(elCell, posI, posJ) {
                 return
             }
             updateMegaBtn('yellowgreen')
-            toggleMegaView(firstPos, lastPos, true)
+            var oldShown = toggleMega(gBoard, firstPos, lastPos, true, [])
             setTimeout(() => {
-                toggleMegaView(firstPos, lastPos, false)
+                toggleMega(gBoard, firstPos, lastPos, false, oldShown)
                 toggleMegaBtn(true)
                 gGame.isOn = true
             }, 2000);
