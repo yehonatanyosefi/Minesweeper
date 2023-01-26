@@ -136,6 +136,7 @@ button {
 img {
   height: 50px;
   width: 60px;
+  cursor: pointer;
 }
 
 .hide {

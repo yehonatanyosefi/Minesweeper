@@ -105,6 +105,8 @@ function resetElements() {
     updateMines('')
     toggleMegaBtn(false)
     updateMegaBtn('darkblue')
+    var elExterminate = document.querySelector('#exterminator')
+    elExterminate.classList.remove('hide')
 }
 
 function getScore() { //wish I can make it an array instead of this **** thing
@@ -294,6 +296,8 @@ function onExterminateClick() {
     renderBoard(gBoard, '.board-container')
     gGame.markedCount += 3
     updateFlags()
+    var elExterminate = document.querySelector('#exterminator')
+    elExterminate.classList.add('hide')
 }
 
 function onMegaHint() {
