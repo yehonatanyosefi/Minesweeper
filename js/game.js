@@ -108,7 +108,7 @@ function resetElements() {
     var elExterminate = document.querySelector('#exterminator')
     elExterminate.classList.remove('hide')
     if (!isBgMusic) {
-        playSound('bg_music', 0.5, true)
+        playSound('bg_music', 0.25, true)
         isBgMusic = true
     }
 }
