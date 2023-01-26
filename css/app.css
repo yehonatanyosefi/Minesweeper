@@ -65,7 +65,7 @@ table {
   background-color: red;
 }
 
-.number:hover, .bomb:hover {
+.number:hover {
   background-color: white;
   cursor: default;
   opacity: 0.9;
@@ -107,44 +107,35 @@ button {
   width: 75px;
 }
 
-#safe-click {
+.hints {
+  display: inline-block;
+  margin: auto;
+}
+
+.btn {
   border: 2px solid black;
   border-radius: 10px;
-  background-color: turquoise;
   position: relative;
   font-family: 'Courier New', Courier, monospace;
   font-weight: bold;
+  font-size: 12px;
   margin: auto;
   overflow: auto;
-  height: 40px;
-  width: 100px;
+  line-height: 0px;
+  height: 30px;
+  width: 120px;
+}
+
+#safe-click {
+  background-color: turquoise;
 }
 
 #manual-mines {
-  border: 2px solid black;
-  border-radius: 10px;
   background-color: yellow;
-  position: relative;
-  font-family: 'Courier New', Courier, monospace;
-  font-weight: bold;
-  margin: auto;
-  overflow: auto;
-  height: 40px;
-  width: 100px;
 }
 
 #mega-hint {
-  border: 2px solid black;
-  border-radius: 10px;
-  background-color: darkblue;
   color: white;
-  position: relative;
-  font-family: 'Courier New', Courier, monospace;
-  font-weight: bold;
-  margin: auto;
-  overflow: auto;
-  height: 40px;
-  width: 100px;
 }
 
 img {

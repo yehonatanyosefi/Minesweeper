@@ -26,7 +26,7 @@ document.addEventListener('contextmenu', event => event.preventDefault()) //disa
 //mega Hint - V
 //mine exterminator - V
 //ITP - renderCell() instead of renderBoard()
-//ITP - refactor things to use more functions and make it more readable
+//ITP - refactor things to use more functions and make it more readable, like left mouse click and right mouse click
 //ITP - add comments everywhere
 
 function init() {
@@ -59,6 +59,15 @@ function setGlobals() {
     gGame.mineArr = []
     gGame.isMega = false
     gGame.megaFirstPos = {}
+    // var score = JSON.parse(localStorage.getItem('score'))
+    // if (!score) {
+    //     localStorage.setItem('score',JSON.stringify([0,1,2])) //makes score array first time
+    //     var score = JSON.parse(localStorage.getItem('score'))
+    //     for (var i = 0; i < 3; i++) {
+    //         score[i] = Infinity
+    //     }
+    //     console.log('score[i]',score[i])
+    // }
     switch (gLevel.DIFFICULTY) {
         case 0:
             if (!localStorage.scoreEasy) localStorage.scoreEasy = Infinity
@@ -84,10 +93,13 @@ function resetElements() {
     updateSmiley(SMILEY)
     updateTimer('0')
     updateHints()
+    // var score = JSON.parse(localStorage.getItem('score'))[gLevel.DIFFICULTY]
+    // updateScore(score)
     updateScore(getScore())
     updateSafeClicks()
     updateMines('')
     toggleMegaBtn(false)
+    updateMegaBtn('darkblue')
 }
 
 function getScore() { //wish I can make it an array instead of this **** thing
@@ -155,6 +167,35 @@ function createNumbers() {
 }
 
 function onCellClicked(elCell, posI, posJ) {
+    // if (elCell.button === 0) handleLeftMouseClick(elCell, posI, posJ)
+    // else if (elCell.button === 2) handleRightMouseClick(elCell, posI, posJ)
+    if (gGame.isHint && elCell.button === 0) {
+        handleHint(posI, posJ)
+        gGame.isHint = false
+        return
+    } else if (gGame.isMega && elCell.button === 0) {
+        if (!gGame.megaFirstPos.i) {
+            var posObj = {i:posI, j:posJ}
+            gGame.megaFirstPos = posObj
+            updateMegaBtn('orange')
+        } else {
+            var firstPos = gGame.megaFirstPos
+            var lastPos = {i: posI, j: posJ}
+            if (firstPos.i > lastPos.i || firstPos.j > lastPos.j) {
+                playSound('error')
+                return
+            }
+            updateMegaBtn('yellowgreen')
+            toggleMegaView(firstPos, lastPos, true)
+            setTimeout(() => {
+                toggleMegaView(firstPos, lastPos, false)
+                toggleMegaBtn(true)
+                gGame.isOn = true
+            }, 2000);
+            gGame.isMega = false
+        }
+        return
+    }
     if (!gGame.isOn) return
     var currCell = gBoard[posI][posJ]
     if (currCell.isShown || (currCell.isMarked && elCell.button === 0)) return
@@ -167,10 +208,7 @@ function onCellClicked(elCell, posI, posJ) {
         return
     } else if (elCell.button !== 0) return //make it only work for the two mouse buttons and not the scrollwheel or other gaming mouse buttons
 
-    if (!gGame.timerInterval && !gGame.isManualMines) { //make board without bombs on the first cell, and start timer on firstclick
-        handleFirstClick(posI, posJ)
-        startTimer()
-    } else if (gGame.isManualMines) {
+    if (gGame.isManualMines) {
         if (currCell.isMine) return
         if (gGame.MinesPlaced !== gLevel.MINES) {
             currCell.isMine = true
@@ -179,30 +217,14 @@ function onCellClicked(elCell, posI, posJ) {
             return
         } else {
             createNumbers()
+            startTimer()
             gGame.isManualMines = false
         }
-    } else if (gGame.isHint) {
-        handleHint(posI, posJ)
-        gGame.isHint = false
-        return
-    } else if (gGame.isMega) {
-        if (!gGame.megaFirstPos.i) {
-            var posObj = {i:posI, j:posJ}
-            gGame.megaFirstPos = posObj
-        } else {
-            var firstPos = gGame.megaFirstPos
-            var lastPos = {i: posI, j: posJ}
-            toggleMegaView(firstPos, lastPos, true)
-            gGame.isOn = false
-            setTimeout(() => {
-                toggleMegaView(firstPos, lastPos, false)
-                toggleMegaBtn(true)
-                gGame.isOn = true
-            }, 2000);
-            gGame.isMega = false
-        }
-        return
+    } else if (!gGame.timerInterval) { //make board without bombs on the first cell, and start timer on firstclick
+        handleFirstClick(posI, posJ)
+        startTimer()
     }
+
     if (currCell.isMine) {
         if (gGame.livesCount === 0) currCell.isShown = true
         checkGameOver(false)
@@ -219,14 +241,13 @@ function onCellClicked(elCell, posI, posJ) {
     renderBoard(gBoard, '.board-container') //renders all board TODO: refactor to each cell
 }
 
-function toggleMegaView(firstPos, lastPos, show) {
-    for (var i = firstPos.i; i <= lastPos.i; i++) {
-        for (var j = firstPos.j; j <= lastPos.j; j++) {
-            gBoard[i][j].isShown = show
-        }
-    }
-    renderBoard(gBoard, '.board-container')
-}
+// function handleRightMouseClick(elCell, posI, posJ) {
+
+// }
+
+// function handleLeftMouseClick(elCell, posI, posJ) {
+
+// }
 
 function onUndoClick() {
     if (!gGame.timerInterval) return
@@ -241,7 +262,7 @@ function onUndoClick() {
 }
 
 function onHintClick() {
-    if (gGame.hintsCount === 0 || !gGame.isOn || !gGame.timerInterval || gGame.isHint) return
+    if (gGame.hintsCount === 0 || !gGame.isOn || !gGame.timerInterval || gGame.isHint || gGame.isMega) return
     gGame.hintsCount--
     gGame.isHint = true
     updateHints()
@@ -279,8 +300,13 @@ function onExterminateClick() {
 }
 
 function onMegaHint() {
-    if (!gGame.timerInterval) return
+    if (!gGame.timerInterval || !gGame.isOn || gGame.isHint || gGame.isMega) return
     if (!gGame.megaFirstPos.i) gGame.isMega = !gGame.isMega
+    if (gGame.isMega) {
+        updateMegaBtn('lightblue')
+        playSound('mega')
+        gGame.isOn = false
+    }
 }
 
 function handleFirstClick(posI, posJ) {
@@ -324,6 +350,11 @@ function checkGameOver(isWin) {
         updateFlags()
         updateSmiley('😎')
         playSound('win')
+        
+        // var score = JSON.parse(localStorage.getItem('score'))
+        // console.log('score',score[gLevel.DIFFICULTY])
+        // console.log('gGame.secsPassed',gGame.secsPassed)
+        // if (gGame.secsPassed < score[gLevel.DIFFICULTY]) score[gLevel.DIFFICULTY] = gGame.secsPassed
         switch (gLevel.DIFFICULTY) { //hope to make this an array
             case 0:
                 if (gGame.secsPassed < localStorage.scoreEasy) {

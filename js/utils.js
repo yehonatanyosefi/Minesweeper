@@ -55,6 +55,11 @@ function showHint(board, posI, posJ) { //can refactor with expand with a 3rd fun
             var currPos = { posI: i, posJ: j }
             posArr.push(currPos)
             board[i][j].isShown = true
+            if (board[i][j].isMarked) {
+                gGame.markedCount--
+                board[i][j].isMarked = false
+                updateFlags()
+            }
         }
     }
     renderBoard(board, '.board-container')
@@ -129,10 +134,30 @@ function updateScore(score) {
     else elScore.innerText = score
 }
 
+function updateMegaBtn(color) {
+    var elMegaBtn = document.querySelector('#mega-hint')
+    elMegaBtn.style.backgroundColor = color
+}
+
 function toggleMegaBtn(isHide) {
     var elBtn = document.querySelector('#mega-hint')
     if (isHide) elBtn.classList.add('hide')
     else elBtn.classList.remove('hide')
+}
+
+function toggleMegaView(firstPos, lastPos, show) {
+
+    for (var i = firstPos.i; i <= lastPos.i; i++) {
+        for (var j = firstPos.j; j <= lastPos.j; j++) {
+            gBoard[i][j].isShown = show
+            if (gBoard[i][j].isMarked) {
+                gGame.markedCount--
+                gBoard[i][j].isMarked = false
+                updateFlags()
+            }
+        }
+    }
+    renderBoard(gBoard, '.board-container')
 }
 
 function startTimer() {
