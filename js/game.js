@@ -107,10 +107,6 @@ function resetElements() {
     updateMegaBtn('darkblue')
     var elExterminate = document.querySelector('#exterminator')
     elExterminate.classList.remove('hide')
-    if (!isBgMusic) {
-        playSound('bg_music', 0.25, true)
-        isBgMusic = true
-    }
 }
 
 function getScore() { //wish I can make it an array instead of this **** thing
@@ -179,6 +175,10 @@ function createNumbers() {
 }
 
 function onCellClicked(elCell, posI, posJ) {
+    if (!isBgMusic) {
+        playSound('bg_music', 0.25, true)
+        isBgMusic = true
+    }
     if (gGame.isHint && elCell.button === 0) {
         handleHint(posI, posJ)
         gGame.isHint = false
