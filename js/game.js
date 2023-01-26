@@ -159,7 +159,7 @@ function onCellClicked(elCell, posI, posJ) {
     var currCell = gBoard[posI][posJ]
     if (currCell.isShown || (currCell.isMarked && elCell.button === 0)) return
     if (elCell.button === 2) { //make or break flag
-        if (gGame.markedCount === gLevel.MINES && !currCell.isMarked) return
+        if (gGame.markedCount >= gLevel.MINES && !currCell.isMarked) return
         currCell.isMarked = !currCell.isMarked
         gGame.markedCount = (currCell.isMarked) ? gGame.markedCount + 1 : gGame.markedCount - 1
         updateFlags()
