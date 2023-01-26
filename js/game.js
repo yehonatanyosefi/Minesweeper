@@ -30,6 +30,10 @@ document.addEventListener('contextmenu', event => event.preventDefault()) //disa
 //ITP - add comments everywhere
 
 function init() {
+    if (gGame.isMega) {
+        playSound('error')
+        return
+    }
     setGlobals()
 
     resetElements()
@@ -59,6 +63,7 @@ function setGlobals() {
     gGame.mineArr = []
     gGame.isMega = false
     gGame.megaFirstPos = {}
+    gGame.megaFirstPress = false
     // var score = JSON.parse(localStorage.getItem('score'))
     // if (!score) {
     //     localStorage.setItem('score',JSON.stringify([0,1,2])) //makes score array first time
@@ -117,6 +122,7 @@ function getScore() { //wish I can make it an array instead of this **** thing
 }
 
 function setDifficulty(diffLevel) { //should I rename it to onClickDifficulty? can't get used to naming conventions
+    if (gGame.isMega) return
     gLevel.DIFFICULTY = diffLevel
     init()
 }
@@ -174,9 +180,10 @@ function onCellClicked(elCell, posI, posJ) {
         gGame.isHint = false
         return
     } else if (gGame.isMega && elCell.button === 0) {
-        if (!gGame.megaFirstPos.i) {
+        if (!gGame.megaFirstPress) {
             var posObj = {i:posI, j:posJ}
             gGame.megaFirstPos = posObj
+            gGame.megaFirstPress = true
             updateMegaBtn('orange')
         } else {
             var firstPos = gGame.megaFirstPos
@@ -191,8 +198,8 @@ function onCellClicked(elCell, posI, posJ) {
                 toggleMega(gBoard, firstPos, lastPos, false, oldShown)
                 toggleMegaBtn(true)
                 gGame.isOn = true
+                gGame.isMega = false
             }, 2000);
-            gGame.isMega = false
         }
         return
     }
