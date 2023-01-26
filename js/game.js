@@ -274,6 +274,8 @@ function onExterminateClick() {
     }
     createNumbers()
     renderBoard(gBoard, '.board-container')
+    gGame.markedCount += 3
+    updateFlags()
 }
 
 function onMegaHint() {
