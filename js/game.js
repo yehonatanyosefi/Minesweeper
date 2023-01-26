@@ -28,7 +28,7 @@ document.addEventListener('contextmenu', event => event.preventDefault()) //disa
 //ITP - renderCell() instead of renderBoard()
 //ITP - refactor things to use more functions and make it more readable, like left mouse click and right mouse click
 //ITP - add comments everywhere
-playSound('bg_music', 0.75)
+playSound('bg_music', 0.5, true)
 function init() {
     if (gGame.isMega) {
         playSound('error')
