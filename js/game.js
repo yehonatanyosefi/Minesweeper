@@ -173,8 +173,6 @@ function createNumbers() {
 }
 
 function onCellClicked(elCell, posI, posJ) {
-    // if (elCell.button === 0) handleLeftMouseClick(elCell, posI, posJ)
-    // else if (elCell.button === 2) handleRightMouseClick(elCell, posI, posJ)
     if (gGame.isHint && elCell.button === 0) {
         handleHint(posI, posJ)
         gGame.isHint = false
@@ -247,14 +245,6 @@ function onCellClicked(elCell, posI, posJ) {
     if (gGame.shownCount === (gLevel.Size ** 2 - gLevel.MINES)) checkGameOver(true)
     renderBoard(gBoard, '.board-container') //renders all board TODO: refactor to each cell
 }
-
-// function handleRightMouseClick(elCell, posI, posJ) {
-
-// }
-
-// function handleLeftMouseClick(elCell, posI, posJ) {
-
-// }
 
 function onUndoClick() {
     if (!gGame.timerInterval) return

@@ -27,12 +27,6 @@ table {
   background-color: rgb(215,184,153);
 }
 
-.restart-btn {
-  background-color: turquoise;
-  border: 5px solid white;
-  color: black;
-}
-
 .num1 {
   color: blue;
 }
@@ -81,6 +75,7 @@ table {
 
 button {
   background-color: white;
+  cursor: pointer;
 }
 
 #smiley {
