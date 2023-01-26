@@ -183,9 +183,9 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min)) + min
 }
 
-function playSound(fileName) {
+function playSound(fileName, volume = 1) {
     var audio = new Audio(`sounds/${fileName}.mp3`)
-    audio.volume = 0.01
+    audio.volume = volume
     audio.play()
 }
 
