@@ -1,5 +1,5 @@
 body {
-  background-color: white;
+  background-color: antiquewhite;
   color: black;
   text-align: center;
   user-select: none;
@@ -15,7 +15,8 @@ table {
   text-align: center;
   font-size: 1.5em;
   outline: auto;
-  outline-color: white;
+  opacity: 80%;
+  outline-color: antiquewhite;
   background-color: rgb(229,194,159);
 }
 
@@ -74,7 +75,7 @@ table {
 }
 
 button {
-  background-color: white;
+  background-color: peachpuff;
   cursor: pointer;
 }
 
@@ -83,6 +84,7 @@ button {
 }
 
 .game-elements {
+  background-color: peachpuff;
   border: 2px dashed black;
   border-radius: 10px;
   position: relative;
@@ -93,6 +95,7 @@ button {
 }
 
 #hints {
+  background-color: aliceblue;
   border: 2px dashed black;
   border-radius: 10px;
   position: relative;
