@@ -60,24 +60,12 @@ table {
   background-color: red;
 }
 
-.number:hover {
-  background-color: white;
-  cursor: default;
-  opacity: 0.9;
-  transition: 150ms;
-}
-
-.cell.isntClicked:hover {
-  background-color: white;
-  cursor: pointer;
-  opacity: 0.88;
-  transition: 150ms;
-}
-
 button {
   background-color: peachpuff;
   cursor: pointer;
+  border-radius: 10%;
 }
+
 
 #smiley {
   font-size: 40px;
@@ -114,7 +102,7 @@ button {
   border: 2px solid black;
   border-radius: 10px;
   position: relative;
-  font-family: 'Courier New', Courier, monospace;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
   font-weight: bold;
   font-size: 12px;
   margin: auto;
@@ -141,6 +129,48 @@ img {
   width: 60px;
   cursor: pointer;
 }
+
+#exterminator:hover {
+  animation: grow 500ms ease-in-out;
+}
+@keyframes grow {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.02);
+  }
+}
+
+button:hover {
+  --ring-color: white;
+  animation: grow 0.5s ease-in-out;
+  animation: ring-animation 0.1s ease-in-out forwards;
+}
+
+@keyframes ring-animation {
+  from {
+    box-shadow: 0 0 0 0px var(--ring-color);
+  }
+  to {
+    box-shadow: 0 0 0 4px var(--ring-color);
+  }
+}
+
+.number:hover {
+  background-color: white;
+  cursor: default;
+  opacity: 0.9;
+  transition: 150ms;
+}
+
+.cell.isntClicked:hover {
+  background-color: white;
+  cursor: pointer;
+  opacity: 0.88;
+  transition: 150ms;
+}
+
 
 .hide {
   visibility: hidden;
