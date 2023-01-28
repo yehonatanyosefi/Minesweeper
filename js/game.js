@@ -176,7 +176,7 @@ function createNumbers() {
 
 function onCellClicked(elCell, posI, posJ) {
     if (!isBgMusic) {
-        playSound('bg_music', 0.25, true)
+        playSound('bg_music', 0.6, true)
         isBgMusic = true
     }
     if (gGame.isHint && elCell.button === 0) {
@@ -265,7 +265,11 @@ function onUndoClick() {
 }
 
 function onHintClick() {
-    if (gGame.hintsCount === 0 || !gGame.isOn || !gGame.timerInterval || gGame.isHint || gGame.isMega) return
+    if (gGame.hintsCount === 0 || !gGame.isOn || gGame.isHint) return
+    if (!gGame.timerInterval || gGame.isMega) {
+        playSound('error')
+        return
+    }
     gGame.hintsCount--
     gGame.isHint = true
     updateHints()
@@ -282,14 +286,22 @@ function onManualMinesClick() {
 }
 
 function onSafeClick() {
-    if (gGame.safeClickCount === 0 || !gGame.isOn || !gGame.timerInterval) return
+    if (gGame.safeClickCount === 0 || !gGame.isOn) return
+    if (!gGame.timerInterval) {
+        playSound('error')
+        return
+    }
     gGame.safeClickCount--
     updateSafeClicks()
     handleSafeClick()
 }
 
 function onExterminateClick() {
-    if (gGame.exterminate || !gGame.timerInterval || gLevel.DIFFICULTY === 0) return
+    if (gGame.exterminate) return
+    if (!gGame.timerInterval || gLevel.DIFFICULTY === 0) {
+        playSound('error')
+        return
+    }
     playSound('exterminate')
     gGame.exterminate = true
     for (var i = 0; i < 3; i++) {
@@ -305,7 +317,11 @@ function onExterminateClick() {
 }
 
 function onMegaHint() {
-    if (!gGame.timerInterval || !gGame.isOn || gGame.isHint || gGame.isMega) return
+    if (!gGame.isOn || gGame.isHint || gGame.isMega) return
+    if (!gGame.timerInterval) {
+        playSound('error')
+        return
+    }
     if (!gGame.megaFirstPos.i) gGame.isMega = !gGame.isMega
     if (gGame.isMega) {
         updateMegaBtn('lightblue')
